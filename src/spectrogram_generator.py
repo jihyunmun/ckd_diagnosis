@@ -16,7 +16,7 @@ def get_max_duration_in_dir(audio_dir, sr=16000):
     return max_duration
 
 class GetMelSpectrogram:
-    def __init__(self, n_mels=128, n_fft=1024, hop_length=160, sr=16000, fmin=0, fmax=None, window='hamming'):
+    def __init__(self, n_mels=256, n_fft=2048, hop_length=512, sr=16000, fmin=0, fmax=None, window='hann'):
         self.n_mels = n_mels
         self.n_fft = n_fft
         self.hop_length = hop_length
