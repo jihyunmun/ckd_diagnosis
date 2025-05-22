@@ -9,8 +9,7 @@ from torch.utils.data import Dataset
 ###########################################################
 class SpectrogramDataset(Dataset):
     def __init__(self,
-                 spec_dir,
-                 resize_to=(224, 224)):
+                 spec_dir):
         """
         load spectrogram(npz) files
         """
@@ -22,7 +21,6 @@ class SpectrogramDataset(Dataset):
             print(f"[WARNING] Spectrogram dir not found: {spec_dir}")
             spec_files = []
         self.data = sorted(self.data)
-        self.resize_to = resize_to
 
     def __len__(self):
         return len(self.data)
@@ -34,10 +32,6 @@ class SpectrogramDataset(Dataset):
         if data.ndim == 2:
             data = data[np.newaxis, ...] # (1, freq, time)
         data = np.repeat(data, 3, axis=0) # (3, freq, time) -> to fit the input channel size of ResNet
-
-        if self.resize_to is not None:
-            data = F.interpolate(data.unsqueeze(0), size=self.resize_to, mode='bilinear', align_corners=False)
-            data = data.squeeze(0)
         
         data = torch.tensor(data, dtype=torch.float32)
         labels = self._get_label_from_path(path)
@@ -69,9 +63,9 @@ class SpectrogramGlottalDataset(SpectrogramDataset):
     def __init__(self, 
                  spec_dir,
                  glottal_csv,
-                 normalize_glottal=False,
-                 resize_to=(224,224)):
-        super().__init__(spec_dir, resize_to=resize_to)
+                 normalize_glottal=False
+                ):
+        super().__init__(spec_dir)
 
         self.glottal_features = [
             'global avg var GCI',
